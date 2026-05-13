@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>How was it? — INSEAD AI Club</title>
+<meta property="og:title" content="How was it? — INSEAD AI Club">
+<meta property="og:description" content="30 seconds of feedback on AI Club Event 1.">
+<meta name="theme-color" content="#0d1117">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1117;
+  --card: #11181f;
+  --card-elev: #161d26;
+  --rule: #1d2530;
+  --rule-bright: #2a3441;
+  --text: #f0f6fc;
+  --muted: #8b949e;
+  --dim: #484f58;
+  --aic-green: #1f7a5a;
+  --aic-green-bright: #2ea37a;
+  --aic-green-dim: rgba(46,163,122,0.15);
+  --aic-green-glow: rgba(46,163,122,0.35);
+  --error: #f87171;
+}
+
+html { font-size: 16px; }
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+.container {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
+}
+
+/* BACK LINK */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+  transition: color 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.back-link:hover { color: var(--aic-green-bright); }
+.back-link .arrow { font-weight: 700; }
+
+/* TERMINAL PROMPT */
+.terminal-prompt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.85rem;
+  opacity: 0.85;
+}
+.terminal-prompt .dollar { color: var(--aic-green-bright); font-weight: 700; }
+.terminal-prompt .cmd { color: var(--text); font-weight: 700; }
+.terminal-prompt .flag { color: rgba(255,255,255,0.45); }
+
+/* HEADLINE */
+.form-headline {
+  font-family: 'Inter', sans-serif;
+  font-weight: 900;
+  font-size: 2.6rem;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  margin-bottom: 0.55rem;
+}
+.form-sub {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.75rem;
+}
+
+/* FIELDS */
+.field { margin-bottom: 1.5rem; }
+.field-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--aic-green-bright);
+  display: block;
+  margin-bottom: 0.55rem;
+}
+.field-hint {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.4rem;
+  line-height: 1.45;
+}
+
+input[type="text"],
+input[type="email"],
+textarea {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+input[type="text"]:focus,
+input[type="email"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--aic-green-bright);
+  background: var(--card-elev);
+}
+textarea {
+  min-height: 80px;
+  resize: vertical;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+}
+
+/* RATING ROW - 5 BIG TAPPABLE BUTTONS */
+.rating-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+.rating-btn {
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 0.95rem 0;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+.rating-btn input { position: absolute; opacity: 0; pointer-events: none; }
+.rating-btn .num {
+  display: block;
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+  letter-spacing: -0.02em;
+}
+.rating-btn .label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.625rem;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.rating-btn.selected {
+  background: var(--aic-green-dim);
+  border-color: var(--aic-green-bright);
+}
+.rating-btn.selected .num { color: var(--aic-green-bright); }
+.rating-btn.selected .label { color: var(--aic-green-bright); }
+
+/* RADIO STACK (re-used from signup) */
+.radio-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.radio-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 0.9rem 1rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+}
+.radio-card input { position: absolute; opacity: 0; pointer-events: none; }
+.radio-card .indicator {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--dim);
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  position: relative;
+}
+.radio-card.selected {
+  background: var(--aic-green-dim);
+  border-color: var(--aic-green-bright);
+}
+.radio-card.selected .indicator { border-color: var(--aic-green-bright); }
+.radio-card.selected .indicator::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px; height: 8px;
+  background: var(--aic-green-bright);
+  border-radius: 50%;
+}
+.radio-text { font-size: 0.95rem; color: var(--text); line-height: 1.4; }
+
+/* FORM RULE */
+.form-rule {
+  height: 1px;
+  background: var(--rule);
+  margin: 1.5rem 0;
+}
+
+/* SUBMIT BUTTON */
+.submit-btn {
+  width: 100%;
+  background: var(--aic-green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.submit-btn:hover { background: var(--aic-green-bright); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.submit-btn .arrow { font-weight: 700; }
+
+.error-msg {
+  color: var(--error);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  margin-bottom: 1rem;
+  display: none;
+}
+.error-msg.visible { display: block; }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+.shake { animation: shake 0.4s ease; }
+
+/* THANKS */
+.thanks {
+  text-align: center;
+  padding: 2rem 0;
+  display: none;
+}
+.thanks.visible { display: block; }
+.thanks-check {
+  width: 64px;
+  height: 64px;
+  background: var(--aic-green-bright);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  animation: pop 0.4s ease;
+}
+.thanks-check svg { width: 32px; height: 32px; }
+@keyframes pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.thanks h2 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.6rem;
+}
+.thanks p {
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 380px;
+  margin: 0 auto 1.5rem;
+}
+.thanks .back-to-invite {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--aic-green-bright);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  text-decoration: none;
+  font-weight: 500;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* FOOTER */
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rule);
+  margin-top: 2rem;
+}
+.footer-logo {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+.footer-logo img { width: 100%; height: 100%; object-fit: contain; }
+.footer-text { display: flex; flex-direction: column; gap: 0.15rem; }
+.footer-title {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+.footer-sub {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 480px) {
+  .container { padding: 1.25rem 1rem; padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px)); }
+  .form-headline { font-size: 2.2rem; letter-spacing: -0.03em; }
+  .rating-btn { padding: 0.85rem 0; }
+  .rating-btn .num { font-size: 1.35rem; }
+}
+@media (max-width: 360px) {
+  .form-headline { font-size: 1.9rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <a href="index.html" class="back-link">
+    <span class="arrow">&larr;</span>
+    <span>back to invite</span>
+  </a>
+
+  <div class="terminal-prompt">
+    <span class="dollar">$</span>
+    <span class="cmd">ai club</span>
+    <span class="flag">--feedback</span>
+  </div>
+  <h1 class="form-headline">How was it?</h1>
+  <p class="form-sub">30 seconds. Helps us land Event 2 better. Honest beats polite - we'd rather hear what didn't work than be told it was lovely.</p>
+
+  <form id="feedback-form" novalidate>
+
+    <div class="field">
+      <label class="field-key">overall rating</label>
+      <div class="rating-row" role="radiogroup" aria-label="Rating 1 to 5">
+        <label class="rating-btn">
+          <input type="radio" name="rating" value="1" required>
+          <span class="num">1</span>
+          <span class="label">bad</span>
+        </label>
+        <label class="rating-btn">
+          <input type="radio" name="rating" value="2">
+          <span class="num">2</span>
+          <span class="label">meh</span>
+        </label>
+        <label class="rating-btn">
+          <input type="radio" name="rating" value="3">
+          <span class="num">3</span>
+          <span class="label">ok</span>
+        </label>
+        <label class="rating-btn">
+          <input type="radio" name="rating" value="4">
+          <span class="num">4</span>
+          <span class="label">good</span>
+        </label>
+        <label class="rating-btn">
+          <input type="radio" name="rating" value="5">
+          <span class="num">5</span>
+          <span class="label">great</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-key">level</label>
+      <div class="radio-stack" role="radiogroup" aria-label="Level">
+        <label class="radio-card">
+          <input type="radio" name="level" value="too-basic">
+          <span class="indicator"></span>
+          <span class="radio-text">A bit too basic for me</span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="level" value="about-right">
+          <span class="indicator"></span>
+          <span class="radio-text">Pitched about right</span>
+        </label>
+        <label class="radio-card">
+          <input type="radio" name="level" value="too-advanced">
+          <span class="indicator"></span>
+          <span class="radio-text">A bit too advanced - lost me in places</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-rule"></div>
+
+    <div class="field">
+      <label class="field-key" for="good">what was good</label>
+      <textarea id="good" name="good" placeholder="The bit that landed was..."></textarea>
+      <p class="field-hint">optional</p>
+    </div>
+
+    <div class="field">
+      <label class="field-key" for="change">what would you change</label>
+      <textarea id="change" name="change" placeholder="Less of... more of... cut entirely..."></textarea>
+      <p class="field-hint">optional, the more honest the better</p>
+    </div>
+
+    <div class="form-rule"></div>
+
+    <div class="field">
+      <label class="field-key" for="name">name</label>
+      <input type="text" id="name" name="name" autocomplete="name">
+      <p class="field-hint">optional - leave blank for anonymous</p>
+    </div>
+
+    <div class="field">
+      <label class="field-key" for="section">section</label>
+      <input type="text" id="section" name="section" placeholder="e.g. E6, J3">
+    </div>
+
+    <p class="error-msg" id="form-error">Please pick a rating before submitting.</p>
+
+    <button type="submit" class="submit-btn" id="submit-btn">
+      <span class="arrow">&rarr;</span>
+      <span>Send feedback</span>
+    </button>
+  </form>
+
+  <div class="thanks" id="thanks">
+    <div class="thanks-check">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 12L10 17L19 7" stroke="#0d1117" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2>Got it. Thanks.</h2>
+    <p>This shapes Event 2. If you wrote something we'll read it.</p>
+    <a href="index.html" class="back-to-invite">
+      <span>&larr;</span>
+      <span>back to invite</span>
+    </a>
+  </div>
+
+  <div class="footer">
+    <div class="footer-logo">
+      <img src="AI_Club_Logo.png" alt="INSEAD AI Club">
+    </div>
+    <div class="footer-text">
+      <div class="footer-title">INSEAD AI Club</div>
+      <div class="footer-sub">Event 1 &middot; Feedback</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxCN68kAUQ7GvswzrKzBdgvYMSFlt6LORis_zIsMQ8Z6vtx0QPcFVnHY0_Lw0WjdKYo3Q/exec';
+
+// Rating + radio visual sync
+document.querySelectorAll('.rating-btn, .radio-card').forEach(card => {
+  const input = card.querySelector('input[type="radio"]');
+  card.addEventListener('click', (e) => {
+    if (e.target.tagName !== 'INPUT') input.checked = true;
+    document.querySelectorAll('.rating-btn, .radio-card').forEach(c => {
+      const ci = c.querySelector('input[type="radio"]');
+      if (ci.name === input.name) c.classList.toggle('selected', ci.checked);
+    });
+  });
+});
+
+const form = document.getElementById('feedback-form');
+const submitBtn = document.getElementById('submit-btn');
+const errorMsg = document.getElementById('form-error');
+const thanks = document.getElementById('thanks');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const rating = form.rating.value;
+  const level = form.level.value;
+  const good = form.good.value.trim();
+  const change = form.change.value.trim();
+  const name = form.name.value.trim();
+  const section = form.section.value.trim();
+
+  if (!rating) {
+    errorMsg.classList.add('visible');
+    form.classList.add('shake');
+    setTimeout(() => form.classList.remove('shake'), 400);
+    return;
+  }
+  errorMsg.classList.remove('visible');
+
+  submitBtn.disabled = true;
+  submitBtn.querySelector('span:last-child').textContent = 'Sending...';
+
+  const payload = {
+    formType: 'feedback',
+    timestamp: new Date().toISOString(),
+    rating, level, good, change, name, section,
+    event: 'Event 1 - Late to AI'
+  };
+
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    form.style.display = 'none';
+    thanks.classList.add('visible');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    submitBtn.disabled = false;
+    submitBtn.querySelector('span:last-child').textContent = 'Send feedback';
+    errorMsg.textContent = 'Something went wrong. Please try again.';
+    errorMsg.classList.add('visible');
+  }
+});
+</script>
+</body>
+</html>
